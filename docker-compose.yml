@@ -1,0 +1,16 @@
+services:
+  digital_links:
+    image: postgres:17
+    container_name: digital_links_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root1234
+      POSTGRES_DB: digital_links
+    ports:
+      - "5432:5432"
+    volumes:
+      - digital_links_data:/var/lib/postgresql/data
+
+volumes:
+  digital_links_data:
