@@ -2,6 +2,7 @@ import express, { Application } from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import { userRoutes } from './routes/user-routes'
+import { authRoutes } from './routes/auth-routes'
 
 dotenv.config()
 
@@ -15,5 +16,6 @@ app.get('/', (req, res) => {
 })
 
 app.use('/users', userRoutes)
+app.use('/auth', authRoutes)
 
 export { app }

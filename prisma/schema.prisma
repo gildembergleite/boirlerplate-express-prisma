@@ -12,17 +12,18 @@ model User {
   name      String
   username  String   @unique
   avatar    String
+  password  String 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  links     Links[]  // Relação: um usuário pode ter vários links
+  links     Links[]
 }
 
 model Links {
-  id            String   @id @default(uuid())
-  title         String
-  url           String   @unique
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  postedByUserId String
-  postedBy      User     @relation(fields: [postedByUserId], references: [id])
+  id              String   @id @default(uuid())
+  title           String
+  url             String   @unique
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  postedByUserId  String
+  postedBy        User     @relation(fields: [postedByUserId], references: [id])
 }
