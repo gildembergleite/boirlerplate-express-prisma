@@ -15,10 +15,18 @@ export class UserService {
   }
 
   static async createUser(data: Omit<IUser, 'id'>): Promise<Omit<IUser, 'password'>> {
+    const isExistUsername = await UserRepository.findByUsername(data.username)
+
+    if (isExistUsername) {
+      throw new Error('Username is exist')
+    }
+    
     const hashedPassword = await bcrypt.hash(data.password, 10)
+    
     const user = await prisma.user.create({
       data: { ...data, password: hashedPassword },
     })
+    
     return { id: user.id, name: user.name, username: user.username, avatar: user.avatar }
   }
 
