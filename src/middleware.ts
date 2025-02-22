@@ -30,23 +30,31 @@ export const validateLogin = validate([
   body('password').isString().notEmpty().withMessage('Password is required'),
 ])
 
-export const validateToken = validate([
-  header('authorization')
-    .exists()
-    .withMessage('Authorization header is required')
-    .custom((value) => {
-      if (!value.startsWith('Bearer ')) {
-        throw new Error('Invalid token format. Expected "Bearer <token>"')
-      }
-      
-      const token = value.split(' ')[1]
+export const authenticateToken = (req: Request, res: Response, next: NextFunction): void => {
+  const authHeader = req.headers['authorization']
+  
+  if (!authHeader) {
+    res.status(401).json({ message: 'Authorization header is required' })
+    return
+  }
 
-      try {
-        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET as string)
-      } catch (err) {
-        throw new Error('Invalid or expired token')
-      }
+  const parts = authHeader.split(' ')
+  
+  if (parts.length !== 2 || parts[0] !== 'Bearer') {
+    res.status(401).json({ message: 'Invalid token format. Expected "Bearer <token>"' })
+    return
+  }
 
-      return true
-    }),
-])
+  const token = parts[1]
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET as string, (err, decoded) => {
+    if (err) {
+      res.status(401).json({ message: 'Invalid or expired token' })
+      return
+    }
+    
+    (req as any).user = decoded
+    
+    next()
+  })
+}
