@@ -1,5 +1,6 @@
-import { body, validationResult, ValidationChain } from 'express-validator'
+import { body, validationResult, ValidationChain, header } from 'express-validator'
 import { Request, Response, NextFunction } from 'express'
+import jwt from 'jsonwebtoken'
 
 const validate = (validations: ValidationChain[]) => {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -27,4 +28,25 @@ export const validateUser = validate([
 export const validateLogin = validate([
   body('username').isString().notEmpty().withMessage('Username is required'),
   body('password').isString().notEmpty().withMessage('Password is required'),
+])
+
+export const validateToken = validate([
+  header('authorization')
+    .exists()
+    .withMessage('Authorization header is required')
+    .custom((value) => {
+      if (!value.startsWith('Bearer ')) {
+        throw new Error('Invalid token format. Expected "Bearer <token>"')
+      }
+      
+      const token = value.split(' ')[1]
+
+      try {
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET as string)
+      } catch (err) {
+        throw new Error('Invalid or expired token')
+      }
+
+      return true
+    }),
 ])
