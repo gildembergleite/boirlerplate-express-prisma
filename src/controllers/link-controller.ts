@@ -30,11 +30,6 @@ export class LinksController {
     try {
       const { title, url, user } = req.body
 
-      if (!title || !url) {
-        res.status(400).json({ error: 'title and url are required' })
-        return
-      }
-
       const newLink = await LinksService.createLink({ title, url, postedByUserId: user.id })
       res.status(201).json(newLink)
     } catch (err) {
