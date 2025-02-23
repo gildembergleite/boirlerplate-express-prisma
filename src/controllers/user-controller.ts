@@ -1,4 +1,6 @@
 import { Request, Response } from 'express'
+import jwt from 'jsonwebtoken'
+import { prisma } from '../config/prisma-client'
 import { UserService } from '../services/user-service'
 
 export class UserController {
@@ -41,7 +43,28 @@ export class UserController {
   static async createUser(req: Request, res: Response): Promise<void> {
     try {
       const newUser = await UserService.createUser(req.body)
-      res.status(201).json(newUser)
+
+      const accessToken = jwt.sign(
+        { id: newUser.id },
+        process.env.ACCESS_TOKEN_SECRET as string,
+        { expiresIn: '30m' }
+      )
+
+      const refreshToken = jwt.sign(
+        { id: newUser.id },
+        process.env.REFRESH_TOKEN_SECRET as string,
+        { expiresIn: '7d' }
+      )
+
+      await prisma.refreshToken.create({
+        data: {
+          tokenHash: refreshToken,
+          userId: newUser.id,
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+        }
+      })
+
+      res.status(201).json({ ...newUser, accessToken, refreshToken })
     } catch (err) {
       const error = err as Error
       res.status(400).json({ message: error.message })
