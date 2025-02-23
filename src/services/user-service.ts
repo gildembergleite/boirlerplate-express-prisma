@@ -1,7 +1,7 @@
-import { prisma } from '../config/prisma-client'
-import { IUser } from '../interfaces/user-interface'
-import { UserRepository } from '../repositories/user-repository'
+import { User } from '@prisma/client'
 import bcrypt from 'bcrypt'
+import { prisma } from '../config/prisma-client'
+import { UserRepository } from '../repositories/user-repository'
 
 export class UserService {
   static async getAllUsers() {
@@ -14,7 +14,8 @@ export class UserService {
     return user
   }
 
-  static async createUser(data: Omit<IUser, 'id'>): Promise<Omit<IUser, 'password'>> {
+  static async createUser(data: Omit<User, 'id'>)
+    : Promise<Omit<User, 'password' | 'createdAt' | 'updatedAt'>> {
     const isExistUsername = await UserRepository.findByUsername(data.username)
 
     if (isExistUsername) {
@@ -27,10 +28,16 @@ export class UserService {
       data: { ...data, password: hashedPassword },
     })
     
-    return { id: user.id, name: user.name, username: user.username, avatar: user.avatar }
+    return {
+      id: user.id,
+      name: user.name,
+      username: user.username,
+      avatar: user.avatar,
+      email: user.email,
+    }
   }
 
-  static async updateUser(id: string, data: Partial<Omit<IUser, 'id' | 'password'>>) {
+  static async updateUser(id: string, data: Partial<Omit<User, 'id' | 'password'>>) {
     return UserRepository.update(id, data)
   }
 

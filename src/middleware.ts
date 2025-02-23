@@ -1,5 +1,5 @@
-import { body, validationResult, ValidationChain, header } from 'express-validator'
-import { Request, Response, NextFunction } from 'express'
+import { NextFunction, Request, Response } from 'express'
+import { ValidationChain, body, validationResult } from 'express-validator'
 import jwt from 'jsonwebtoken'
 
 const validate = (validations: ValidationChain[]) => {
@@ -25,8 +25,13 @@ export const validateUser = validate([
     .withMessage('Password must be at least 6 characters long'),
 ])
 
+export const validateLink = validate([
+  body('title').isString().notEmpty().withMessage('Name is required'),
+  body('url').isString().notEmpty().withMessage('Username is required'),
+])
+
 export const validateLogin = validate([
-  body('username').isString().notEmpty().withMessage('Username is required'),
+  body('email').isString().notEmpty().withMessage('Email is required'),
   body('password').isString().notEmpty().withMessage('Password is required'),
 ])
 
@@ -53,7 +58,7 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
       return
     }
     
-    (req as any).user = decoded
+    req.body.user = decoded
     
     next()
   })

@@ -1,15 +1,14 @@
 import { Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
-import { UserService } from '../services/user-service'
 import { prisma } from '../config/prisma-client'
 import { AuthService } from '../services/auth-service'
 
 export class AuthController {
   static async login(req: Request, res: Response) {
     try {
-      const { username, password } = req.body
+      const { email, password } = req.body
 
-      const user = await AuthService.authenticateUser(username, password)
+      const user = await AuthService.authenticateUser(email, password)
 
       const accessToken = jwt.sign(
         { id: user.id },
@@ -32,7 +31,6 @@ export class AuthController {
       })
 
       res.json({
-        user,
         accessToken,
         refreshToken
       })

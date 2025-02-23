@@ -11,6 +11,7 @@ model User {
   id        String   @id @default(uuid())
   name      String
   username  String   @unique
+  email     String   @unique
   avatar    String
   password  String
   createdAt DateTime @default(now())
@@ -21,20 +22,20 @@ model User {
 }
 
 model Link {
-  id              String   @id @default(uuid())
-  title           String
-  url             String   @unique
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  postedByUserId  String
-  postedBy        User     @relation(fields: [postedByUserId], references: [id], onDelete: Cascade)
+  id             String   @id @default(uuid())
+  title          String
+  url            String   @unique
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  postedByUserId String
+  postedBy       User     @relation(fields: [postedByUserId], references: [id], onDelete: Cascade)
 }
 
 model RefreshToken {
-  id         String   @id @default(uuid())
-  tokenHash  String
-  userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
+  id        String   @id @default(uuid())
+  tokenHash String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 }

@@ -22,6 +22,22 @@ export class UserController {
     }
   }
 
+  static async getUserDetails(req: Request, res: Response): Promise<void> {
+    if (!req.body.user) {
+      res.status(401).json({ message: 'Token inválido' })
+      return
+    }
+
+    const user = await UserService.getUserById(req.body.user.id)
+
+    if (!user) {
+      res.status(404).json({ message: 'Usuário não encontrado' })
+      return
+    }
+
+    res.json(user)
+  }
+
   static async createUser(req: Request, res: Response): Promise<void> {
     try {
       const newUser = await UserService.createUser(req.body)
