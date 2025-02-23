@@ -1,9 +1,9 @@
+import { User } from '@prisma/client'
 import bcrypt from 'bcrypt'
-import { IUser } from '../interfaces/user-interface'
 import { UserRepository } from '../repositories/user-repository'
 
 export class AuthService {
-  static async authenticateUser(email: string, password: string): Promise<Omit<IUser, 'password'>> {
+  static async authenticateUser(email: string, password: string): Promise<Omit<User, 'password' | 'createdAt' | 'updatedAt'>> {
     const user = await UserRepository.findByEmail(email)
     
     if (!user || !(await bcrypt.compare(password, user.password))) {

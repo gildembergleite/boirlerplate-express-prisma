@@ -1,9 +1,8 @@
+import { User } from '@prisma/client'
 import bcrypt from 'bcrypt'
 import { prisma } from '../config/prisma-client'
-import { IUser } from '../interfaces/user-interface'
-
 export class UserRepository {
-  static async findAll(): Promise<Omit<IUser, 'password'>[]> {
+  static async findAll(): Promise<Omit<User, 'password' | 'createdAt' | 'updatedAt'>[]> {
     return prisma.user.findMany({
       select: {
         id: true,
@@ -15,7 +14,7 @@ export class UserRepository {
     })
   }
 
-  static async findById(id: string): Promise<Omit<IUser, 'password'> | null> {
+  static async findById(id: string): Promise<Omit<User, 'password' | 'createdAt' | 'updatedAt'> | null> {
     return prisma.user.findUnique({
       where: { id },
       select: {
@@ -28,15 +27,15 @@ export class UserRepository {
     })
   }
 
-  static async findByUsername(username: string): Promise<IUser | null> {
+  static async findByUsername(username: string): Promise<User | null> {
     return prisma.user.findUnique({ where: { username } })
   }
 
-  static async findByEmail(email: string): Promise<IUser | null> {
+  static async findByEmail(email: string): Promise<User | null> {
     return prisma.user.findUnique({ where: { email } })
   }
 
-  static async create(data: Omit<IUser, 'id'>): Promise<Omit<IUser, 'password'>> {
+  static async create(data: Omit<User, 'id'>): Promise<Omit<User, 'password' | 'createdAt' | 'updatedAt'>> {
     const hashedPassword = await bcrypt.hash(data.password, 10)
     const user = await prisma.user.create({
       data: { ...data, password: hashedPassword },
@@ -50,7 +49,7 @@ export class UserRepository {
     }
   }
 
-  static async update(id: string, data: Partial<Omit<IUser, 'id' | 'password'>>): Promise<Omit<IUser, 'password'>> {
+  static async update(id: string, data: Partial<Omit<User, 'id' | 'password'>>): Promise<Omit<User, 'password' | 'createdAt' | 'updatedAt'>> {
     return prisma.user.update({
       where: { id },
       data,
