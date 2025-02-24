@@ -20,7 +20,13 @@ export class LinkRepository {
       }
     })
 
-    return publicLinks
+    const userData = {
+      name: user.name,
+      avatar: user.avatar,
+      email: user.email,
+    }
+
+    return { user: userData, links: publicLinks }
   }
 
   static async findByUserId(userId: string) {
