@@ -44,10 +44,6 @@ export class AuthController {
     try {
       const { refreshToken } = req.body
 
-      if (!refreshToken) {
-        return res.status(400).json({ message: 'Refresh token is required' })
-      }
-
       const decoded = jwt.verify(
         refreshToken,
         process.env.REFRESH_TOKEN_SECRET as string
@@ -63,17 +59,19 @@ export class AuthController {
       })
 
       if (!storedToken) {
-        return res.status(401).json({ message: 'Invalid refresh token' })
+        res.status(401).json({ message: 'Invalid refresh token' })
+        return
       }
 
       if (new Date(storedToken.expiresAt) < new Date()) {
-        return res.status(401).json({ message: 'Refresh token expired' })
+        res.status(401).json({ message: 'Refresh token expired' })
+        return
       }
 
       const newAccessToken = jwt.sign(
         { id: userId },
         process.env.ACCESS_TOKEN_SECRET as string,
-        { expiresIn: '15m' }
+        { expiresIn: '30m' }
       )
 
       res.json({ accessToken: newAccessToken })

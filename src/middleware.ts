@@ -17,8 +17,9 @@ const validate = (validations: ValidationChain[]) => {
 }
 
 export const validateUser = validate([
-  body('name').isString().notEmpty().withMessage('Name is required'),
-  body('username').isString().notEmpty().withMessage('Username is required'),
+  body('name').isString().notEmpty().withMessage('name is required'),
+  body('username').isString().notEmpty().withMessage('username is required'),
+  body('email').isString().notEmpty().withMessage('email is required'),
   body('avatar').isString().optional(),
   body('password')
     .isLength({ min: 6 })
@@ -26,13 +27,17 @@ export const validateUser = validate([
 ])
 
 export const validateLink = validate([
-  body('title').isString().notEmpty().withMessage('Name is required'),
-  body('url').isString().notEmpty().withMessage('Username is required'),
+  body('title').isString().notEmpty().withMessage('title is required'),
+  body('url').isString().notEmpty().withMessage('url is required'),
 ])
 
 export const validateLogin = validate([
-  body('email').isString().notEmpty().withMessage('Email is required'),
-  body('password').isString().notEmpty().withMessage('Password is required'),
+  body('email').isString().notEmpty().withMessage('email is required'),
+  body('password').isString().notEmpty().withMessage('password is required'),
+])
+
+export const validateRefreshToken = validate([
+  body('refreshToken').isString().notEmpty().withMessage('refreshToken is required'),
 ])
 
 export const authenticateToken = (req: Request, res: Response, next: NextFunction): void => {
