@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node src/server.ts --watch",
-    "build": "tsc",
+    "build": "tsc && npx prisma migrate deploy",
     "start": "node dist/server.js"
   },
   "author": "gildembergleite <gildembergleite@gmail.com>",
