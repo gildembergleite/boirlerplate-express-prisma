@@ -2,6 +2,19 @@ import { Request, Response } from 'express'
 import { LinksService } from '../services/links-service'
 
 export class LinksController {
+  static async listPublicLinks(req: Request, res: Response) {
+    try {
+      const { username } = req.params
+
+      const link = await LinksService.getAllPublicLinks(username)
+      
+      res.status(200).json(link)
+    } catch (err) {
+      const error = err as Error
+      res.status(404).json({ error: error.message })
+    }
+  }
+
   static async getAllLinks(req: Request, res: Response) {
     try {
       const { user } = req.body

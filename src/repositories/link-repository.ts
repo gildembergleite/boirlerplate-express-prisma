@@ -2,6 +2,27 @@ import { Link } from '@prisma/client'
 import { prisma } from '../config/prisma-client'
 
 export class LinkRepository {
+  static async findByUsername(username: string) {
+    const user = await prisma.user.findUnique({
+      where: { username },
+    })
+
+    if (!user) {
+      throw new Error('User not found')
+    }
+
+    const allLinks = await this.findByUserId(user.id)
+
+    const publicLinks = allLinks.map((link) => {
+      return {
+        title: link.title,
+        url: link.url,
+      }
+    })
+
+    return publicLinks
+  }
+
   static async findByUserId(userId: string) {
     return prisma.link.findMany({
       where: { postedByUserId: userId },

@@ -4,6 +4,7 @@ import { authenticateToken, validateLink } from '../middleware'
 
 const router = Router()
 
+router.get('/public/:username', LinksController.listPublicLinks)
 router.get('/', authenticateToken, LinksController.getAllLinks)
 router.get('/:id', authenticateToken, LinksController.getLinkById)
 router.post('/', validateLink, authenticateToken, LinksController.createLink)

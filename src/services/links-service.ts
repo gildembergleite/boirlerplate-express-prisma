@@ -2,6 +2,10 @@ import { Link } from '@prisma/client'
 import { LinkRepository } from '../repositories/link-repository'
 
 export class LinksService {
+  static async getAllPublicLinks(username: string) {
+    return LinkRepository.findByUsername(username)
+  }
+
   static async getAllLinks(userId: string) {
     return LinkRepository.findByUserId(userId)
   }
